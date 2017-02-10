@@ -19,5 +19,6 @@ public class MainActivity extends AppCompatActivity {
         if (null == savedInstanceState) {
             getFragmentManager().beginTransaction().replace(R.id.container, Camera2Fragment.newInstance()).commit();
         }
+
     }
 }

@@ -24,10 +24,12 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v13.app.FragmentCompat;
 import android.util.Log;
 import android.util.Size;
@@ -51,6 +53,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
 
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class Camera2Fragment extends Fragment
         implements FragmentCompat.OnRequestPermissionsResultCallback {
 
@@ -95,6 +98,7 @@ public class Camera2Fragment extends Fragment
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture texture) {
             Log.e(TAG, "onSurfaceTextureUpdated!!");
+
         }
 
     };
@@ -375,11 +379,8 @@ public class Camera2Fragment extends Fragment
 
     private void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("CameraBackground");
-
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-
-
     }
 
     private void stopBackgroundThread() {
@@ -391,8 +392,6 @@ public class Camera2Fragment extends Fragment
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private ImageReader mPreviewReader;
@@ -405,9 +404,10 @@ public class Camera2Fragment extends Fragment
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
             Surface surface = new Surface(texture);
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-//            mPreviewRequestBuilder.addTarget(surface);
-            mPreviewRequestBuilder.addTarget(mPreviewReader.getSurface());
-            mCameraDevice.createCaptureSession(asList(mPreviewReader.getSurface()), new CameraCaptureSession.StateCallback() {
+            mPreviewRequestBuilder.addTarget(surface);
+//            mPreviewRequestBuilder.addTarget(mPreviewReader.getSurface());
+//            , mPreviewReader.getSurface(), mPreviewReader.getSurface()
+            mCameraDevice.createCaptureSession(asList(surface), new CameraCaptureSession.StateCallback() {
                         @Override
                         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                             if (null == mCameraDevice) {
