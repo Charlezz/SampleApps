@@ -1,8 +1,13 @@
 package charlezz.bluetoothtest;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattServer;
+import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -22,11 +27,13 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.SeekBar;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
@@ -34,13 +41,24 @@ import butterknife.Unbinder;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class BleActivity extends AppCompatActivity {
 
-    public static final String SERVICE_UUID = "0000b81d-0000-1000-8000-00805f9b34fb";
+    //    public static final String SERVICE_UUID = "1000b81d-0000-1000-8000-00805f9b34fb";
+    public static final UUID CUSTOM_SERVICE = UUID.fromString("10001809-0000-1000-8000-00805f9b34fb");
+    private static final UUID CUSTOM_CHARACTERISTIC = UUID.fromString("10002A19-0000-1000-8000-00805f9b34fb");
+    private static final UUID CHARACTERISTIC_USER_DESCRIPTION_UUID = UUID.fromString("10002901-0000-1000-8000-00805f9b34fb");
+    private static final UUID CLIENT_CHARACTERISTIC_CONFIGURATION_UUID = UUID.fromString("10002902-0000-1000-8000-00805f9b34fb");
     public static final String TAG = BleActivity.class.getSimpleName();
     private static int REQUEST_ENABLE_BT = 0;
 
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothGattServer mServer;
+    private BluetoothGattCharacteristic customCharacteristic;
 
+
+    private ArrayList<BluetoothDevice> connectedDevices = new ArrayList<>();
+
+    @BindView(R.id.seekBar)
+    SeekBar mSeekbar;
 
     private Unbinder unbinder;
 
@@ -91,7 +109,7 @@ public class BleActivity extends AppCompatActivity {
         Log.e(TAG, "scanLeDevice");
         List<ScanFilter> filter = new ArrayList<>();
         ScanFilter scanFilter = new ScanFilter.Builder()
-                .setServiceUuid(new ParcelUuid(UUID.fromString(SERVICE_UUID)))
+                .setServiceUuid(new ParcelUuid(CUSTOM_SERVICE))
                 .build();
 
         filter.add(scanFilter);
@@ -117,19 +135,36 @@ public class BleActivity extends AppCompatActivity {
     @OnClick(R.id.peripheral)
     public void startAdvertising(Button btn) {
         Log.e(TAG, "startAdvertising");
-        AdvertiseSettings settings = new AdvertiseSettings.Builder()
-                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
-                .setTimeout(0)
-                .build();
 
-        ParcelUuid pUuid = new ParcelUuid(UUID.fromString(SERVICE_UUID));
+        AdvertiseSettings settings = new AdvertiseSettings.Builder()
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+                .setConnectable(true)
+                .setTimeout(0)
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
+                .build();
 
         AdvertiseData data = new AdvertiseData.Builder()
                 .setIncludeDeviceName(true)
-                .addServiceUuid(pUuid)
+                .setIncludeTxPowerLevel(true)
+                .addServiceUuid(new ParcelUuid(CUSTOM_SERVICE))
+                .addServiceData(new ParcelUuid(CUSTOM_SERVICE), buildTempPacket())
                 .build();
+
+
         mBluetoothAdapter.getBluetoothLeAdvertiser().startAdvertising(settings, data, advertisingCallback);
 
+
+    }
+
+    private byte[] buildTempPacket() {
+        int value;
+        try {
+            value = Integer.parseInt("0");
+        } catch (NumberFormatException e) {
+            value = 0;
+        }
+
+        return new byte[]{(byte) value, 0x00};
     }
 
     @OnClick(R.id.stopPeripheral)
@@ -184,6 +219,14 @@ public class BleActivity extends AppCompatActivity {
             Log.e(TAG, "newState:" + newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 gatt.discoverServices();
+
+
+//                gatt.getService(UUID.fromString(SERVICE_UUID)).getCharacteristic();
+//                BluetoothGattCharacteristic mCH = mSVC.getCharacteristic(characteristic_uuid);
+//                mCH.setValue(data_to_write);
+//                mBG.writeCharacteristic(mCH);
+
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 isConnected = false;
             }
@@ -192,8 +235,96 @@ public class BleActivity extends AppCompatActivity {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
-            List<BluetoothGattService> list = gatt.getServices();
-            gatt.setCharacteristicNotification()
         }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicRead(gatt, characteristic, status);
+        }
+
     };
+
+
+    @OnClick(R.id.openGattServer)
+    public void openGattServer() {
+
+        mServer = mBluetoothManager.openGattServer(this, new BluetoothGattServerCallback() {
+                    @Override
+                    public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
+                        super.onConnectionStateChange(device, status, newState);
+                        switch (newState) {
+                            case BluetoothGattServer.STATE_CONNECTING:
+                                Log.e(TAG, "STATE_CONNECTING");
+                                break;
+                            case BluetoothGattServer.STATE_CONNECTED:
+                                Log.e(TAG, "STATE_CONNECTED");
+                                connectedDevices.add(device);
+                                break;
+                            case BluetoothGattServer.STATE_DISCONNECTING:
+                                Log.e(TAG, "STATE_DISCONNECTING");
+                                break;
+                            case BluetoothGattServer.STATE_DISCONNECTED:
+                                Log.e(TAG, "STATE_DISCONNECTED");
+                                connectedDevices.remove(device);
+                                break;
+                        }
+
+                    }
+                }
+        );
+
+        customCharacteristic = new BluetoothGattCharacteristic(CUSTOM_CHARACTERISTIC,
+                BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+                BluetoothGattCharacteristic.PERMISSION_READ);
+
+        customCharacteristic.addDescriptor(getClientCharacteristicConfigurationDescriptor());
+        customCharacteristic.addDescriptor(getCharacteristicUserDescriptionDescriptor("default value"));
+
+        BluetoothGattService service = new BluetoothGattService(CUSTOM_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY);
+        service.addCharacteristic(customCharacteristic);
+        mServer.addService(service);
+
+
+    }
+
+    @OnClick(R.id.closeGattServer)
+    public void closeGattServer() {
+        if (mServer != null) {
+            mServer.clearServices();
+            connectedDevices.clear();
+            mServer.close();
+            mServer = null;
+            customCharacteristic = null;
+        }
+    }
+
+    public static BluetoothGattDescriptor getClientCharacteristicConfigurationDescriptor() {
+        BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(
+                CLIENT_CHARACTERISTIC_CONFIGURATION_UUID,
+                (BluetoothGattDescriptor.PERMISSION_READ | BluetoothGattDescriptor.PERMISSION_WRITE));
+        descriptor.setValue(new byte[]{0, 0});
+        return descriptor;
+    }
+
+    public static BluetoothGattDescriptor getCharacteristicUserDescriptionDescriptor(String defaultValue) {
+        BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(
+                CHARACTERISTIC_USER_DESCRIPTION_UUID, (BluetoothGattDescriptor.PERMISSION_READ));
+        try {
+            descriptor.setValue(defaultValue.getBytes("UTF-8"));
+        } finally {
+            return descriptor;
+        }
+    }
+
+
+    @OnClick(R.id.notify)
+    public void notifyDataChanged() {
+        int value = mSeekbar.getProgress();
+
+        customCharacteristic.setValue(value, BluetoothGattCharacteristic.FORMAT_UINT8, /* offset */ 0);
+        for (BluetoothDevice device : connectedDevices) {
+            mServer.notifyCharacteristicChanged(device, customCharacteristic, true);
+        }
+    }
+
 }
