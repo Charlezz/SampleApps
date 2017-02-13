@@ -41,11 +41,13 @@ import butterknife.Unbinder;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class BleActivity extends AppCompatActivity {
 
-    //    public static final String SERVICE_UUID = "1000b81d-0000-1000-8000-00805f9b34fb";
-    public static final UUID CUSTOM_SERVICE = UUID.fromString("10001809-0000-1000-8000-00805f9b34fb");
-    private static final UUID CUSTOM_CHARACTERISTIC = UUID.fromString("10002A19-0000-1000-8000-00805f9b34fb");
-    private static final UUID CHARACTERISTIC_USER_DESCRIPTION_UUID = UUID.fromString("10002901-0000-1000-8000-00805f9b34fb");
-    private static final UUID CLIENT_CHARACTERISTIC_CONFIGURATION_UUID = UUID.fromString("10002902-0000-1000-8000-00805f9b34fb");
+    public static final UUID CUSTOM_SERVICE = UUID.fromString("00000329-0000-1000-8000-00805F9B34FB");
+    private static final UUID CUSTOM_CHARACTERISTIC = UUID.fromString("00000330-0000-1000-8000-00805F9B34FB");
+//    private static final UUID CHARACTERISTIC_USER_DESCRIPTION_UUID = UUID.fromString("00000331-0000-1000-8000-00805F9B34FB");
+//    private static final UUID CLIENT_CHARACTERISTIC_CONFIGURATION_UUID = UUID.fromString("00000332-0000-1000-8000-00805F9B34FB");
+
+    private static final UUID CHARACTERISTIC_USER_DESCRIPTION_UUID = UUID.fromString("00002901-0000-1000-8000-00805f9b34fb");
+    private static final UUID CLIENT_CHARACTERISTIC_CONFIGURATION_UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     public static final String TAG = BleActivity.class.getSimpleName();
     private static int REQUEST_ENABLE_BT = 0;
 
@@ -242,6 +244,10 @@ public class BleActivity extends AppCompatActivity {
             super.onCharacteristicRead(gatt, characteristic, status);
         }
 
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            super.onCharacteristicChanged(gatt, characteristic);
+        }
     };
 
 
@@ -273,14 +279,17 @@ public class BleActivity extends AppCompatActivity {
                 }
         );
 
+        BluetoothGattService service = new BluetoothGattService(CUSTOM_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY);
+
         customCharacteristic = new BluetoothGattCharacteristic(CUSTOM_CHARACTERISTIC,
                 BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-                BluetoothGattCharacteristic.PERMISSION_READ);
+                BluetoothGattCharacteristic.PERMISSION_READ | BluetoothGattCharacteristic.PERMISSION_WRITE);
+
 
         customCharacteristic.addDescriptor(getClientCharacteristicConfigurationDescriptor());
         customCharacteristic.addDescriptor(getCharacteristicUserDescriptionDescriptor("default value"));
 
-        BluetoothGattService service = new BluetoothGattService(CUSTOM_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY);
+
         service.addCharacteristic(customCharacteristic);
         mServer.addService(service);
 
@@ -320,9 +329,10 @@ public class BleActivity extends AppCompatActivity {
     @OnClick(R.id.notify)
     public void notifyDataChanged() {
         int value = mSeekbar.getProgress();
-
-        customCharacteristic.setValue(value, BluetoothGattCharacteristic.FORMAT_UINT8, /* offset */ 0);
+        customCharacteristic.setValue(value, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
         for (BluetoothDevice device : connectedDevices) {
+            Log.e(TAG, "notifyCharacteristicChanged:" + device.getName());
+
             mServer.notifyCharacteristicChanged(device, customCharacteristic, true);
         }
     }
