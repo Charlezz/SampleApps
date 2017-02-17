@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="charlezz.gpstest.MainActivity">
+
+    <Button
+        android:id="@+id/btn_permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="require Permission" />
+
+    <Button
+        android:id="@+id/request_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Request On" />
+
+    <Button
+        android:id="@+id/request_off"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Request Off" />
+
+    <Button
+        android:id="@+id/lastKnownLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="last known location" />
+
+    <Button
+        android:id="@+id/single_network_provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="single network provider" />
+
+    <Button
+        android:id="@+id/single_passive_provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="single passive provider" />
+
+    <Button
+        android:id="@+id/single_gps_provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="single gps provider" />
+
+    <Button
+        android:id="@+id/single_any_provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="single Any Provider" />
+
+
+</LinearLayout>
