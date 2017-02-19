@@ -15,7 +15,7 @@
         android:id="@+id/scanLe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="scan Le"/>
+        android:text="start scan"/>
 
     <Button
         android:id="@+id/stopLe"
@@ -27,13 +27,13 @@
         android:id="@+id/peripheral"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="peripheral"/>
+        android:text="start advertising"/>
 
     <Button
         android:id="@+id/stopPeripheral"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="stop peripheral"/>
+        android:text="stop advertising"/>
 
     <Button
         android:id="@+id/openGattServer"
@@ -57,6 +57,7 @@
     <Button
         android:id="@+id/notify"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="notify"/>
 
 </LinearLayout>

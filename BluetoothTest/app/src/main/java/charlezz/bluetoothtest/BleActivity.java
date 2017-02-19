@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothGattServer;
 import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
@@ -22,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ParcelUuid;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -111,22 +111,22 @@ public class BleActivity extends AppCompatActivity {
         Log.e(TAG, "scanLeDevice");
         List<ScanFilter> filter = new ArrayList<>();
         ScanFilter scanFilter = new ScanFilter.Builder()
-                .setServiceUuid(new ParcelUuid(CUSTOM_SERVICE))
+//                .setServiceUuid(new ParcelUuid(CUSTOM_SERVICE))
                 .build();
 
         filter.add(scanFilter);
 
         ScanSettings mScanSettings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .build();
         mBluetoothAdapter.getBluetoothLeScanner().startScan(filter, mScanSettings, mScanCallBack);
-//        AsyncTask.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                mBluetoothAdapter.getBluetoothLeScanner().startScan(mScanCallBack);
-//            }
-//        });
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mBluetoothAdapter.getBluetoothLeScanner().stopScan(mScanCallBack);
+            }
+        }, 5000);
     }
 
     @OnClick(R.id.stopLe)
@@ -194,12 +194,13 @@ public class BleActivity extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
-            Log.e(TAG, result.getDevice().getName() + "|" + result.getRssi() + "|");
-            if (!isConnected) {
+            Log.e(TAG, result.getDevice().getName() + " rssi=" + result.getRssi());
+            if (isConnected) {
+                mBluetoothAdapter.getBluetoothLeScanner().stopScan(mScanCallBack);
+            } else {
+                BluetoothGatt gatt = result.getDevice().connectGatt(BleActivity.this, false, mGattCallback);
                 isConnected = true;
-                result.getDevice().connectGatt(BleActivity.this, false, mGattCallback);
             }
-
         }
 
         @Override
@@ -214,39 +215,75 @@ public class BleActivity extends AppCompatActivity {
             Log.e(TAG, "onBatchScanResults");
         }
     };
+
+
+    public static final int STATE_DISCONNECTED = 0;
+    public static final int STATE_CONNECTING = 1;
+    public static final int STATE_CONNECTED = 2;
+    public static final int STATE_DISCONNECTING = 3;
+
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
-            Log.e(TAG, "newState:" + newState);
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                gatt.discoverServices();
-
-
-//                gatt.getService(UUID.fromString(SERVICE_UUID)).getCharacteristic();
-//                BluetoothGattCharacteristic mCH = mSVC.getCharacteristic(characteristic_uuid);
-//                mCH.setValue(data_to_write);
-//                mBG.writeCharacteristic(mCH);
-
-
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                isConnected = false;
-            }
+            Log.e(TAG, gatt.getDevice().getName() + "|" + status + "|" + newState);
+            gatt.discoverServices();
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+            Log.e(TAG, "onServicesDiscovered");
+
+            List<BluetoothGattService> services = gatt.getServices();
+            for (BluetoothGattService service : services) {
+                Log.e(TAG, "service:" + service.getUuid());
+
+
+                List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
+                for (BluetoothGattCharacteristic characteristic : characteristics) {
+                    Log.e(TAG, "characteristic:" + characteristic.getUuid());
+
+                    gatt.setCharacteristicNotification(characteristic, true);
+
+                    gatt.readCharacteristic(characteristic);
+                    List<BluetoothGattDescriptor> descriptors = characteristic.getDescriptors();
+                    for (BluetoothGattDescriptor descriptor : descriptors) {
+                        gatt.readDescriptor(descriptor);
+                        Log.e(TAG, descriptor.toString());
+                    }
+                }
+            }
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
+            Log.e(TAG, "onCharacteristicRead");
+            List<BluetoothGattDescriptor> descriptors = characteristic.getDescriptors();
+            for (BluetoothGattDescriptor descriptor : descriptors) {
+                gatt.readDescriptor(descriptor);
+            }
         }
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
+            List<BluetoothGattDescriptor> descriptors = characteristic.getDescriptors();
+            Log.e(TAG, "onCharacteristicChanged:" + characteristic.getValue());
+
+        }
+
+        @Override
+        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorRead(gatt, descriptor, status);
+            Log.e(TAG, "onDescriptorRead");
+        }
+
+        @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorWrite(gatt, descriptor, status);
+            Log.e(TAG, "onDescriptorWrite");
         }
     };
 
@@ -255,6 +292,55 @@ public class BleActivity extends AppCompatActivity {
     public void openGattServer() {
 
         mServer = mBluetoothManager.openGattServer(this, new BluetoothGattServerCallback() {
+
+                    @Override
+                    public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
+                        super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
+                        Log.e(TAG, "onCharacteristicReadRequest");
+                    }
+
+                    @Override
+                    public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+                        super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
+                        Log.e(TAG, "onCharacteristicWriteRequest");
+                    }
+
+                    @Override
+                    public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattDescriptor descriptor) {
+                        super.onDescriptorReadRequest(device, requestId, offset, descriptor);
+                        Log.e(TAG, "onDescriptorReadRequest");
+                    }
+
+                    @Override
+                    public void onDescriptorWriteRequest(BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+                        super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
+                        Log.e(TAG, "onDescriptorWriteRequest");
+                    }
+
+                    @Override
+                    public void onExecuteWrite(BluetoothDevice device, int requestId, boolean execute) {
+                        super.onExecuteWrite(device, requestId, execute);
+                        Log.e(TAG, "onExecuteWrite");
+                    }
+
+                    @Override
+                    public void onMtuChanged(BluetoothDevice device, int mtu) {
+                        super.onMtuChanged(device, mtu);
+                        Log.e(TAG, "onMtuChanged");
+                    }
+
+                    @Override
+                    public void onNotificationSent(BluetoothDevice device, int status) {
+                        super.onNotificationSent(device, status);
+                        Log.e(TAG, "onNotificationSent");
+                    }
+
+                    @Override
+                    public void onServiceAdded(int status, BluetoothGattService service) {
+                        super.onServiceAdded(status, service);
+                        Log.e(TAG, "onServiceAdded");
+                    }
+
                     @Override
                     public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
                         super.onConnectionStateChange(device, status, newState);
@@ -263,14 +349,15 @@ public class BleActivity extends AppCompatActivity {
                                 Log.e(TAG, "STATE_CONNECTING");
                                 break;
                             case BluetoothGattServer.STATE_CONNECTED:
-                                Log.e(TAG, "STATE_CONNECTED");
+                                Log.e(TAG, "STATE_CONNECTED:" + device.getName() + "|" + device.getAddress());
                                 connectedDevices.add(device);
                                 break;
                             case BluetoothGattServer.STATE_DISCONNECTING:
                                 Log.e(TAG, "STATE_DISCONNECTING");
                                 break;
                             case BluetoothGattServer.STATE_DISCONNECTED:
-                                Log.e(TAG, "STATE_DISCONNECTED");
+                                Log.e(TAG, "STATE_DISCONNECTED:" + device.getName() + "|" + device.getAddress());
+                                isConnected = false;
                                 connectedDevices.remove(device);
                                 break;
                         }
@@ -292,8 +379,6 @@ public class BleActivity extends AppCompatActivity {
 
         service.addCharacteristic(customCharacteristic);
         mServer.addService(service);
-
-
     }
 
     @OnClick(R.id.closeGattServer)
@@ -328,12 +413,14 @@ public class BleActivity extends AppCompatActivity {
 
     @OnClick(R.id.notify)
     public void notifyDataChanged() {
+        Log.e(TAG, "notifyDataChanged");
         int value = mSeekbar.getProgress();
         customCharacteristic.setValue(value, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+        customCharacteristic.getDescriptor(CHARACTERISTIC_USER_DESCRIPTION_UUID).setValue(new byte[]{0, 0});
         for (BluetoothDevice device : connectedDevices) {
             Log.e(TAG, "notifyCharacteristicChanged:" + device.getName());
-
-            mServer.notifyCharacteristicChanged(device, customCharacteristic, true);
+            boolean result = mServer.notifyCharacteristicChanged(device, customCharacteristic, true);
+            Log.e(TAG, "result:" + result);
         }
     }
 
