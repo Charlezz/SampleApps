@@ -23,7 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BleActivity"></activity>
+        <activity android:name=".ble.central.BleActivity" />
+        <activity android:name=".ble.peripheral.PeripheralActivity" />
+        <activity android:name=".ble.central.CentralActivity" />
+        <activity android:name=".ble.central.DeviceControlActivity"></activity>
     </application>
 
 </manifest>

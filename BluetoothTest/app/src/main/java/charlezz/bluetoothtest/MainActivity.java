@@ -16,6 +16,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import charlezz.bluetoothtest.ble.central.CentralActivity;
+import charlezz.bluetoothtest.ble.peripheral.PeripheralActivity;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
@@ -83,5 +85,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Log.e(TAG, "requestPermissions");
             EasyPermissions.requestPermissions(this, "Bluettoth Permission", 0, new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_COARSE_LOCATION});
         }
+    }
+
+    @OnClick(R.id.peripheral)
+    public void startPeripheralActivity() {
+        startActivity(new Intent(MainActivity.this, PeripheralActivity.class));
+    }
+
+    @OnClick(R.id.central)
+    public void startCentralActivity() {
+        startActivity(new Intent(MainActivity.this, CentralActivity.class));
     }
 }
