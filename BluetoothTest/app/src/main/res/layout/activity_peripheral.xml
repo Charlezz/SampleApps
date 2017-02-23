@@ -24,6 +24,7 @@
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:max="100"
         android:progress="50" />
 
     <TextView
@@ -72,5 +73,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Advertising " />
+
+    <Button
+        android:id="@+id/notify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="NOTIFY" />
 
 </LinearLayout>
