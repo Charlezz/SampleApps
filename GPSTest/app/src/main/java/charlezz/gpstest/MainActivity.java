@@ -59,31 +59,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         unbinder.unbind();
     }
 
-    LocationListener listener = new LocationListener() {
-
-        @Override
-        public void onLocationChanged(Location location) {
-
-        }
-
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String s) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String s) {
-
-        }
-    };
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
+
+//            location.getLatitude();
+//            location.getLongitude();
             Log.e(TAG, location.toString() + "|" + location.getProvider());
         }
 
@@ -143,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @OnClick(R.id.lastKnownLocation)
     public void getLastKnownLocation() {
-
         Log.e(TAG, "LAST gps_provider:" + locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).toString());
         Log.e(TAG, "LAST network_provider:" + locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).toString());
         Log.e(TAG, "LAST passive_provider:" + locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER).toString());
@@ -153,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @OnClick(R.id.single_network_provider)
     public void getLocationWithNetworkProvider() {
         Log.e(TAG, "network provider enable:" + locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
-        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener, getMainLooper());
+        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener, null);
     }
 
     @OnClick(R.id.single_passive_provider)
@@ -164,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @OnClick(R.id.single_gps_provider)
     public void getLocationWithGPS() {
         Log.e(TAG, "gps provider enable:" + locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER));
-        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, getMainLooper());
+        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, null);
     }
 
     @OnClick(R.id.single_any_provider)
