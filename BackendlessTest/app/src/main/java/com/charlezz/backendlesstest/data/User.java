@@ -5,7 +5,15 @@ package com.charlezz.backendlesstest.data;
  */
 
 public class User {
-    private String name;
-    private String email;
-    private String password;
+
+    public long lastLogin;
+    public String userStatus;
+    public long created;
+    public String name;
+    public String password;
+
+    public String ownerId;
+    public long updated;
+    public String email;
+    public String objectId;
 }

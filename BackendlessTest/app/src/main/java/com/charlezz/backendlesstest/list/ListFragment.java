@@ -10,9 +10,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.charlezz.backendlesstest.R;
+import com.charlezz.backendlesstest.data.RetrieveUsersResult;
+import com.charlezz.backendlesstest.data.User;
+import com.charlezz.backendlesstest.network.NetworkManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Charles on 2017. 1. 29..
@@ -41,8 +47,21 @@ public class ListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
         listView.setAdapter(adapter);
-        for (int i = 0; i < 100; i++) {
-            adapter.add("test:" + i);
-        }
+
+        NetworkManager.getInstance().getAllUsers(new Callback<RetrieveUsersResult>() {
+            @Override
+            public void onResponse(Call<RetrieveUsersResult> call, Response<RetrieveUsersResult> response) {
+                RetrieveUsersResult result = response.body();
+                for (User user : result.data) {
+                    adapter.add(user.email);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RetrieveUsersResult> call, Throwable t) {
+
+            }
+        });
+
     }
 }
