@@ -1,6 +1,6 @@
 package com.charlezz.backendlesstest.network;
 
-import com.charlezz.backendlesstest.data.RetrieveUsersResult;
+import com.charlezz.backendlesstest.data.UserResult;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,14 +37,24 @@ public class NetworkManager {
     }
 
 
-    public void getAllUsers(Callback<RetrieveUsersResult> callBack) {
+    public void getAllUsers(Callback<UserResult> callBack) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        RetrieveUsers users = retrofit.create(RetrieveUsers.class);
-        Call<RetrieveUsersResult> result = users.getResult();
+        GetUsers users = retrofit.create(GetUsers.class);
+        Call<UserResult> result = users.getResult();
+        result.enqueue(callBack);
+    }
+
+    public void getUserByEmail(String email, Callback<UserResult> callBack) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        GetUserByEmail users = retrofit.create(GetUserByEmail.class);
+        Call<UserResult> result = users.getResult("email=\'" + email + "\'");
         result.enqueue(callBack);
     }
 }

@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.charlezz.backendlesstest.R;
-import com.charlezz.backendlesstest.data.RetrieveUsersResult;
+import com.charlezz.backendlesstest.data.UserResult;
 import com.charlezz.backendlesstest.data.User;
 import com.charlezz.backendlesstest.network.NetworkManager;
 
@@ -48,17 +48,17 @@ public class ListFragment extends Fragment {
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
         listView.setAdapter(adapter);
 
-        NetworkManager.getInstance().getAllUsers(new Callback<RetrieveUsersResult>() {
+        NetworkManager.getInstance().getAllUsers(new Callback<UserResult>() {
             @Override
-            public void onResponse(Call<RetrieveUsersResult> call, Response<RetrieveUsersResult> response) {
-                RetrieveUsersResult result = response.body();
+            public void onResponse(Call<UserResult> call, Response<UserResult> response) {
+                UserResult result = response.body();
                 for (User user : result.data) {
                     adapter.add(user.email);
                 }
             }
 
             @Override
-            public void onFailure(Call<RetrieveUsersResult> call, Throwable t) {
+            public void onFailure(Call<UserResult> call, Throwable t) {
 
             }
         });
