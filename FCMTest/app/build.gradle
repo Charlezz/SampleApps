@@ -4,9 +4,9 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "charlezz.gpstest"
+        applicationId "charlezz.fcmtest"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -26,7 +26,8 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.1'
     testCompile 'junit:junit:4.12'
-    compile 'pub.devrel:easypermissions:0.3.0'
-    compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.google.firebase:firebase-messaging:10.2.0'
+    compile 'com.google.android.gms:play-services-base:10.2.0'
 }
+// ADD THIS AT THE BOTTOM
+apply plugin: 'com.google.gms.google-services'
