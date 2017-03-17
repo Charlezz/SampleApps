@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "814705904517",
+    "firebase_url": "https://admobtest-1ad18.firebaseio.com",
+    "project_id": "admobtest-1ad18",
+    "storage_bucket": "admobtest-1ad18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814705904517:android:b0945089c3634950",
+        "android_client_info": {
+          "package_name": "charlezz.admobtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "814705904517-cqeffj2p57kmsgtvtgja21voc7rdr3lu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "charlezz.admobtest",
+            "certificate_hash": "4a42e42b2cbdeb57f956519bcde5a5d70f1ae234"
+          }
+        },
+        {
+          "client_id": "814705904517-kbn42714lr3n0hinns02rjcnen9jjvgh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxEwMfa71b4I53cQox0V_-iJ0RcX9EXr4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "814705904517-kbn42714lr3n0hinns02rjcnen9jjvgh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
