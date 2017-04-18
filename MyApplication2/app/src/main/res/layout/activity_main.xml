@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="charlezz.myapplication.MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="match_parent" />
+
+
+            <TextView
+                android:layout_width="400dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="400dp" />
+
+            <TextView
+                android:layout_width="390dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="390dp" />
+
+            <TextView
+                android:layout_width="380dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="380dp" />
+
+            <TextView
+                android:layout_width="370dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="370dp" />
+
+            <TextView
+                android:layout_width="360dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="360dp" />
+
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="350dp" />
+
+            <TextView
+                android:layout_width="340dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="340dp" />
+
+            <TextView
+                android:layout_width="330dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="330dp" />
+
+            <TextView
+                android:layout_width="320dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="320dp" />
+
+            <TextView
+                android:layout_width="310dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="310dp" />
+
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="300dp" />
+
+            <TextView
+                android:layout_width="290dp"
+                android:layout_height="30dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:text="290dp" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>
