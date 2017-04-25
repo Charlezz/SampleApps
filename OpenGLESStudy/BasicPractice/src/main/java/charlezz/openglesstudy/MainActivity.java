@@ -32,7 +32,7 @@ public class MainActivity extends ListActivity {
     AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            Intent intent = new Intent(MainActivity.this, PracticeActivity.class);
+            Intent intent = new Intent(MainActivity.this, OpenGLActivity.class);
             intent.putExtra(KEY_MENU, items[i].getCanonicalName());
             startActivity(intent);
         }

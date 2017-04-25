@@ -20,8 +20,8 @@ import charlezz.openglesstudy.views.basic_gl.MainGLSurfaceView;
  * Created by Charles on 3/23/17.
  */
 
-public class PracticeActivity extends AppCompatActivity {
-    public static final String TAG = PracticeActivity.class.getSimpleName();
+public class OpenGLActivity extends AppCompatActivity {
+    public static final String TAG = OpenGLActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
