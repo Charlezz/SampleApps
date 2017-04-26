@@ -1,0 +1,1 @@
+include ':CMakeApp', ':NdkBuildApp', ':NdkBuildApp2', ':NdkBuildLib', ':SampleApp', ':CMakeBuildLib', ':NdkBuildLib2'

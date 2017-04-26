@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CMakeApp/CMakeApp.iml" filepath="$PROJECT_DIR$/CMakeApp/CMakeApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CMakeBuildLib/CMakeBuildLib.iml" filepath="$PROJECT_DIR$/CMakeBuildLib/CMakeBuildLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NDKBuild.iml" filepath="$PROJECT_DIR$/NDKBuild.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NdkBuildApp/NdkBuildApp.iml" filepath="$PROJECT_DIR$/NdkBuildApp/NdkBuildApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NdkBuildApp2/NdkBuildApp2.iml" filepath="$PROJECT_DIR$/NdkBuildApp2/NdkBuildApp2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NdkBuildLib/NdkBuildLib.iml" filepath="$PROJECT_DIR$/NdkBuildLib/NdkBuildLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NdkBuildLib2/ndkbuildlib2.iml" filepath="$PROJECT_DIR$/NdkBuildLib2/ndkbuildlib2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SampleApp/SampleApp.iml" filepath="$PROJECT_DIR$/SampleApp/SampleApp.iml" />
+    </modules>
+  </component>
+</project>
