@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         unbinder = ButterKnife.bind(this);
 
-        for(InetAddress address :getLocalInetAddress()){
-            Log.e(TAG,address.getHostAddress());
+        for (InetAddress address : getLocalInetAddress()) {
+            Log.e(TAG, address.getHostAddress());
         }
 
 
