@@ -198,7 +198,7 @@ public class MainActivity extends Activity {
 
 //        textureId = initTexture();
         surfaceTexture = new SurfaceTexture(textureId);
-        surfaceTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
+        surfaceTexture.setOnFrameAvailableListener( new SurfaceTexture.OnFrameAvailableListener() {
             @Override
             public void onFrameAvailable(SurfaceTexture surfaceTexture) {
                 updateSurface = true;

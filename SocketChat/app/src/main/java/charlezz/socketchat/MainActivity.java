@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Log.e(TAG, "getLocalIpAddress:" + getLocalIpAddress());
         } catch (Exception e) {
-            e.printStackTrace();
-        }
+            e.printStackT
     }
 
     @Override

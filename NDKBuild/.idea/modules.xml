@@ -8,7 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/NdkBuildApp/NdkBuildApp.iml" filepath="$PROJECT_DIR$/NdkBuildApp/NdkBuildApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/NdkBuildApp2/NdkBuildApp2.iml" filepath="$PROJECT_DIR$/NdkBuildApp2/NdkBuildApp2.iml" />
       <module fileurl="file://$PROJECT_DIR$/NdkBuildLib/NdkBuildLib.iml" filepath="$PROJECT_DIR$/NdkBuildLib/NdkBuildLib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NdkBuildLib2/ndkbuildlib2.iml" filepath="$PROJECT_DIR$/NdkBuildLib2/ndkbuildlib2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NdkBuildLib2/NdkBuildLib2.iml" filepath="$PROJECT_DIR$/NdkBuildLib2/NdkBuildLib2.iml" />
       <module fileurl="file://$PROJECT_DIR$/SampleApp/SampleApp.iml" filepath="$PROJECT_DIR$/SampleApp/SampleApp.iml" />
     </modules>
   </component>
