@@ -1,13 +1,40 @@
 package charlezz.gallerytest;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.widget.GridView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String TAG = MainActivity.class.getSimpleName();
+    public static final float IMAGE_STANDARD_WIDTH = 100f;
+
+    @BindView(R.id.gridView)
+    GridView gridView;
+
+    GalleryAdapter mGalleryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
+        int space = 5;
+
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        int columnCount = (int) (dm.densityDpi / IMAGE_STANDARD_WIDTH);
+
+        gridView.setNumColumns(columnCount);
+        gridView.setVerticalSpacing(space);
+        gridView.setHorizontalSpacing(space);
+        gridView.setPadding(space, space, space, space);
+
+        mGalleryAdapter = new GalleryAdapter((dm.widthPixels - (space * (columnCount + 1))) / columnCount);
+        gridView.setAdapter(mGalleryAdapter);
+
     }
 }
