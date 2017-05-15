@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_THUMBNAIL = 1;
     private static final int REQUEST_BIG_PHOTO = 2;
+    private static final int REQUEST_PICK_FROM_GALLERY = 3;
 
     @BindView(imageView)
     ImageView mImageView;
@@ -92,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             mCurrentPhotoPath = null;
+        } else if (requestCode == REQUEST_PICK_FROM_GALLERY && resultCode == RESULT_OK) {
+            Uri picture = data.getData();
+            mImageView.setImageURI(picture);
         }
     }
 
@@ -145,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.take)
-    public void OnTakeClicked() {
+    public void OnTakeClick() {
         Log.e(TAG, "OnTakeClicked");
         takePhoto();
     }
@@ -160,6 +164,17 @@ public class MainActivity extends AppCompatActivity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+    }
+
+    @OnClick(R.id.pick)
+    public void OnPickClick() {
+        pickFromGallery();
+    }
+
+    public void pickFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        startActivityForResult(intent, REQUEST_PICK_FROM_GALLERY);
     }
 
 
