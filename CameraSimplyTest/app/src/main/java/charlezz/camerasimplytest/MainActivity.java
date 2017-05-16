@@ -133,9 +133,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (photoFile != null) {
                 Uri photoUri = FileProvider.getUriForFile(this, "charlezz.camerasimplytest.fileprovider", photoFile);
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                List<ResolveInfo> resolvedIntentActivities = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                List<ResolveInfo> resolvedIntentActivities = getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
                 for (ResolveInfo resolvedIntentInfo : resolvedIntentActivities) {
                     String packageName = resolvedIntentInfo.activityInfo.packageName;
                     grantUriPermission(packageName, photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
