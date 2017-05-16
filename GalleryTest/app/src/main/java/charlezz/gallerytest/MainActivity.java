@@ -1,8 +1,10 @@
 package charlezz.gallerytest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.GridView;
 
 import butterknife.BindView;
@@ -26,7 +28,10 @@ public class MainActivity extends AppCompatActivity {
         int space = 5;
 
         DisplayMetrics dm = getResources().getDisplayMetrics();
-        int columnCount = (int) (dm.densityDpi / IMAGE_STANDARD_WIDTH);
+        int columnCount = (int) (dm.widthPixels / dm.density / IMAGE_STANDARD_WIDTH);
+        Log.e(TAG, "dm.densityDpi:" + dm.densityDpi);
+        Log.e(TAG, "dm.widthPixels:" + dm.widthPixels);
+        Log.e(TAG, "dm.density:" + dm.density);
 
         gridView.setNumColumns(columnCount);
         gridView.setVerticalSpacing(space);
@@ -36,5 +41,10 @@ public class MainActivity extends AppCompatActivity {
         mGalleryAdapter = new GalleryAdapter((dm.widthPixels - (space * (columnCount + 1))) / columnCount);
         gridView.setAdapter(mGalleryAdapter);
 
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
     }
 }
