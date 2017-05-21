@@ -1,6 +1,7 @@
 package charlezz.bluetoothtest;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import butterknife.BindView;
@@ -96,4 +99,49 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void startCentralActivity() {
         startActivity(new Intent(MainActivity.this, CentralActivity.class));
     }
+
+    @OnClick(R.id.setDiscoverable)
+    public void setDiscoverable() {
+//            Class<BluetoothAdapter> classBluetoothAdapter = (Class<BluetoothAdapter>) Class.forName(BluetoothAdapter.class.getCanonicalName());
+
+
+        try {
+            Method m_getScanMode = BluetoothAdapter.class.getMethod("getScanMode");
+            Method m_setScanMode = BluetoothAdapter.class.getMethod("setScanMode", int.class);
+
+            Log.e(TAG, "getScaneMode1:" + m_getScanMode.invoke(BluetoothAdapter.getDefaultAdapter()));
+            m_setScanMode.invoke(BluetoothAdapter.getDefaultAdapter(), SCAN_MODE_CONNECTABLE_DISCOVERABLE);
+            Log.e(TAG, "getScaneMode:" + m_getScanMode.invoke(BluetoothAdapter.getDefaultAdapter()));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public static final int SCAN_MODE_CONNECTABLE_DISCOVERABLE = 23;
+    public static final int SCAN_MODE_NONE = 20;
+
+    @OnClick(R.id.setScanModeNone)
+    public void setScanModeNone() {
+        try {
+            Method m_getScanMode = BluetoothAdapter.class.getMethod("getScanMode");
+            Method m_setScanMode = BluetoothAdapter.class.getMethod("setScanMode", int.class);
+
+            Log.e(TAG, "getScaneMode1:" + m_getScanMode.invoke(BluetoothAdapter.getDefaultAdapter()));
+            m_setScanMode.invoke(BluetoothAdapter.getDefaultAdapter(), SCAN_MODE_NONE);
+            Log.e(TAG, "getScaneMode:" + m_getScanMode.invoke(BluetoothAdapter.getDefaultAdapter()));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

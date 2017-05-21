@@ -24,6 +24,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="central" />
+    <Button
+        android:id="@+id/setDiscoverable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set Discoverable" />
+    <Button
+        android:id="@+id/setScanModeNone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set ScanMode None" />
 
 
 </LinearLayout>
