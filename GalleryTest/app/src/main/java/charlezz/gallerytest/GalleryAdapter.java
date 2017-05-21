@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
@@ -25,9 +27,14 @@ public class GalleryAdapter extends BaseAdapter {
         Log.e(TAG, "imageWidth:" + imageWidth);
     }
 
+    public void setitems(ArrayList<String> items) {
+        this.items = items;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
-        return 100;
+        return items.size();
     }
 
     @Override
@@ -44,9 +51,33 @@ public class GalleryAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView iv = new ImageView(parent.getContext());
         iv.setImageResource(R.mipmap.ic_launcher);
-        GridView.LayoutParams params = new AbsListView.LayoutParams((int) imageWidth, (int) imageWidth);
+        GridView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) imageWidth);
         iv.setBackgroundResource(R.color.colorAccent);
         iv.setLayoutParams(params);
+
+//        int targetW = iv.getWidth();
+//        int targetH = iv.getHeight();
+//
+//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//        bmOptions.inJustDecodeBounds = true;
+//        BitmapFactory.decodeFile(items.get(position), bmOptions);
+//        int photoW = bmOptions.outWidth;
+//        int photoH = bmOptions.outHeight;
+//
+////        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+//        int scaleFactor = (int) (photoW / imageWidth);
+//        bmOptions.inJustDecodeBounds = false;
+//        bmOptions.inSampleSize = scaleFactor;
+//        bmOptions.inPurgeable = true;
+//
+//        Bitmap bitmap = BitmapFactory.decodeFile(items.get(position), bmOptions);
+//        iv.setImageBitmap(bitmap);
+//        iv.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        Glide.with(parent.getContext())
+                .load(items.get(position))
+                .into(iv);
+
         return iv;
     }
 }
