@@ -175,5 +175,4 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_PICK_FROM_GALLERY);
     }
 
-
 }
