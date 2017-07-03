@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{bc0c8f8c-a3a8-46aa-9071-69fd499ffbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{3352628c-8464-461f-b771-7fa88c894e0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsPlayerManager.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Types.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoPlayerManager.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VideoPlayerAPI.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsPlayerManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoPlayerManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoPlayerAPI.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
