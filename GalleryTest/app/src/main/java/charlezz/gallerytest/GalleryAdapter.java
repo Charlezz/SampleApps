@@ -5,10 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -30,6 +26,7 @@ public class GalleryAdapter extends BaseAdapter {
     public void setitems(ArrayList<String> items) {
         this.items = items;
         notifyDataSetChanged();
+        Log.e(TAG, "setitems");
     }
 
     @Override
@@ -38,7 +35,7 @@ public class GalleryAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public String getItem(int position) {
         return items.get(position);
     }
 
@@ -49,11 +46,22 @@ public class GalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView iv = new ImageView(parent.getContext());
-        iv.setImageResource(R.mipmap.ic_launcher);
-        GridView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) imageWidth);
-        iv.setBackgroundResource(R.color.colorAccent);
-        iv.setLayoutParams(params);
+
+        GalleryItemView view = (GalleryItemView) convertView;
+        if (view == null) {
+            view = new GalleryItemView(parent.getContext());
+            AbsListView.LayoutParams params = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, (int) imageWidth);
+            view.setLayoutParams(params);
+        }
+        view.setImage(getItem(position));
+
+
+        return view;
+//        ImageView iv = new ImageView(parent.getContext());
+//        iv.setImageResource(R.mipmap.ic_launcher);
+//        GridView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) imageWidth);
+//        iv.setBackgroundResource(R.color.colorAccent);
+//        iv.setLayoutParams(params);
 
 //        int targetW = iv.getWidth();
 //        int targetH = iv.getHeight();
@@ -74,10 +82,10 @@ public class GalleryAdapter extends BaseAdapter {
 //        iv.setImageBitmap(bitmap);
 //        iv.setScaleType(ImageView.ScaleType.FIT_XY);
 
-        Glide.with(parent.getContext())
-                .load(items.get(position))
-                .into(iv);
-
-        return iv;
+//        Glide.with(parent.getContext())
+//                .load(items.get(position))
+//                .into(iv);
+//
+//        return iv;
     }
 }

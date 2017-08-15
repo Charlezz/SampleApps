@@ -1,14 +1,17 @@
 package charlezz.gallerytest;
 
 import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.GridView;
 
 import com.gun0912.tedpermission.PermissionListener;
@@ -20,10 +23,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
+import static charlezz.gallerytest.R.id.delete;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        gridView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE);
         new TedPermission(this)
                 .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .setPermissionListener(new PermissionListener() {
@@ -100,51 +101,120 @@ public class MainActivity extends AppCompatActivity {
 
     @OnItemClick(R.id.gridView)
     public void onItemClick(int position) {
-//        Intent intent = new Intent(MainActivity.this, ViewerActivity.class);
-//        intent.putExtra(ViewerActivity.KEY_IMAGE, (String) mGalleryAdapter.getItem(position));
-//        startActivity(intent);
+//
+//
+//        final ProgressDialog dialog = new ProgressDialog(this);
+//        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//        dialog.setIndeterminate(false);
+//        dialog.show();
+//        String path = (String) mGalleryAdapter.getItem(position);
+//        File file = new File(path);
+//        NetworkManager.getInstance().uploadImage(file, new OnProgressListener() {
+//            @Override
+//            public void onProgress(int progress) {
+//                dialog.setProgress(progress);
+//                dialog.setSecondaryProgress(50);
+//                Log.e(TAG, "progress:" + progress);
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//                Log.e(TAG, "finished");
+//            }
+//        }, new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if (response.isSuccessful()) {
+//                    Log.e(TAG, "success");
+//                } else {
+//                    Log.e(TAG, "not success");
+//                }
+//                dialog.dismiss();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Log.e(TAG, "onFailure");
+//                dialog.dismiss();
+//            }
+//        });
 
+//        Intent intent = new Intent();
+//        intent.setType("image/*");
+//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+    }
 
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setIndeterminate(false);
-        dialog.show();
-        String path = (String) mGalleryAdapter.getItem(position);
-        File file = new File(path);
-        NetworkManager.getInstance().uploadImage(file, new OnProgressListener() {
-            @Override
-            public void onProgress(int progress) {
-                dialog.setProgress(progress);
-                dialog.setSecondaryProgress(50);
-                Log.e(TAG, "progress:" + progress);
-            }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-            @Override
-            public void onFinish() {
-                Log.e(TAG, "finished");
-            }
-        }, new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    Log.e(TAG, "success");
-                } else {
-                    Log.e(TAG, "not success");
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case delete:
+                SparseBooleanArray sparseBooleanArray = gridView.getCheckedItemPositions();
+                for (int i = 0; i < sparseBooleanArray.size(); i++) {
+                    int key = sparseBooleanArray.keyAt(i);
+                    if (sparseBooleanArray.get(key)) {
+                        Log.e(TAG, key + " is checked:" + mGalleryAdapter.getItem(key));
+                        File file = new File(mGalleryAdapter.getItem(key));
+                        if (file.exists()) {
+                            Log.e(TAG, "successfully delete");
+                            file.delete();
+                            MediaScannerConnection.scanFile(this,
+                                    new String[]{file.getPath()},
+                                    null,
+                                    new MediaScannerConnection.MediaScannerConnectionClient() {
+                                        @Override
+                                        public void onMediaScannerConnected() {
+
+                                        }
+
+                                        @Override
+                                        public void onScanCompleted(String path, Uri uri) {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    gridView.clearChoices();
+                                                    mGalleryAdapter.setitems(fetchAllImages());
+                                                }
+                                            });
+
+                                        }
+                                    });
+//                            MediaScannerConnection.scanFile(this,
+//                                    new String[]{mGalleryAdapter.getItem(key)},
+//                                    null,
+//                                    new MediaScannerConnection.MediaScannerConnectionClient() {
+//                                        @Override
+//                                        public void onMediaScannerConnected() {
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void onScanCompleted(String path, Uri uri) {
+//                                            if (uri != null) {
+//                                                getContentResolver().delete(uri, null, null);
+//                                                runOnUiThread(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        mGalleryAdapter.setitems(fetchAllImages());
+//                                                    }
+//                                                });
+//                                            }
+//                                        }
+//                                    });
+                        } else {
+                            Log.e(TAG, "no exists file");
+                        }
+                    }
                 }
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "onFailure");
-                dialog.dismiss();
-            }
-        });
-
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
