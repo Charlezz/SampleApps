@@ -1,10 +1,15 @@
 package charlezz.gallerytest;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -15,53 +20,46 @@ import static android.content.ContentValues.TAG;
  */
 
 public class GalleryAdapter extends BaseAdapter {
-    ArrayList<String> items = new ArrayList<>();
-    float imageWidth;
+	ArrayList<String> items = new ArrayList<>();
+	float imageWidth;
 
-    public GalleryAdapter(float imageWidth) {
-        this.imageWidth = imageWidth;
-        Log.e(TAG, "imageWidth:" + imageWidth);
-    }
+	public GalleryAdapter(float imageWidth) {
+		this.imageWidth = imageWidth;
+		Log.e(TAG, "imageWidth:" + imageWidth);
+	}
 
-    public void setitems(ArrayList<String> items) {
-        this.items = items;
-        notifyDataSetChanged();
-        Log.e(TAG, "setitems");
-    }
+	public void setitems(ArrayList<String> items) {
+		this.items = items;
+		notifyDataSetChanged();
+	}
 
-    @Override
-    public int getCount() {
-        return items.size();
-    }
+	@Override
+	public int getCount() {
+		return items.size();
+	}
 
-    @Override
-    public String getItem(int position) {
-        return items.get(position);
-    }
+	@Override
+	public Object getItem(int position) {
+		return items.get(position);
+	}
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		ImageView iv = (ImageView) convertView;
+		if (convertView == null) {
+			iv = new ImageView(parent.getContext());
+		}
 
-        GalleryItemView view = (GalleryItemView) convertView;
-        if (view == null) {
-            view = new GalleryItemView(parent.getContext());
-            AbsListView.LayoutParams params = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, (int) imageWidth);
-            view.setLayoutParams(params);
-        }
-        view.setImage(getItem(position));
-
-
-        return view;
-//        ImageView iv = new ImageView(parent.getContext());
-//        iv.setImageResource(R.mipmap.ic_launcher);
-//        GridView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) imageWidth);
-//        iv.setBackgroundResource(R.color.colorAccent);
-//        iv.setLayoutParams(params);
+		iv.setImageResource(R.mipmap.ic_launcher);
+		iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+		GridView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) imageWidth);
+		iv.setBackgroundResource(R.color.colorAccent);
+		iv.setLayoutParams(params);
 
 //        int targetW = iv.getWidth();
 //        int targetH = iv.getHeight();
@@ -81,11 +79,14 @@ public class GalleryAdapter extends BaseAdapter {
 //        Bitmap bitmap = BitmapFactory.decodeFile(items.get(position), bmOptions);
 //        iv.setImageBitmap(bitmap);
 //        iv.setScaleType(ImageView.ScaleType.FIT_XY);
-
-//        Glide.with(parent.getContext())
-//                .load(items.get(position))
-//                .into(iv);
 //
-//        return iv;
-    }
+
+
+		Glide.with(((Activity) parent.getContext()))
+				.load(items.get(position))
+				.into(iv);
+
+
+		return iv;
+	}
 }

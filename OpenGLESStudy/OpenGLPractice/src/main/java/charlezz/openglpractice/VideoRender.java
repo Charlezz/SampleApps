@@ -1,6 +1,5 @@
 package charlezz.openglpractice;
 
-import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.opengl.GLES20;
@@ -81,7 +80,7 @@ public class VideoRender
 
     private MediaPlayer mMediaPlayer;
 
-    public VideoRender(Context context) {
+    public VideoRender() {
         mTriangleVertices = ByteBuffer.allocateDirect(
                 mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
@@ -92,6 +91,78 @@ public class VideoRender
 
     public void setMediaPlayer(MediaPlayer player) {
         mMediaPlayer = player;
+    }
+
+
+    float[] vMatrix = new float[16];
+
+    @Override
+    public void onSurfaceChanged(GL10 glUnused, int width, int height) {
+        Matrix.orthoM(vMatrix, 0, -10, 10, -10, 10, -2000, 2000);
+    }
+
+    @Override
+    public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
+        mProgram = createProgram(mVertexShader, mFragmentShader);
+        if (mProgram == 0) {
+            return;
+        }
+        maPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
+        checkGlError("glGetAttribLocation aPosition");
+        if (maPositionHandle == -1) {
+            throw new RuntimeException("Could not get attrib location for aPosition");
+        }
+        maTextureHandle = GLES20.glGetAttribLocation(mProgram, "aTextureCoord");
+        checkGlError("glGetAttribLocation aTextureCoord");
+        if (maTextureHandle == -1) {
+            throw new RuntimeException("Could not get attrib location for aTextureCoord");
+        }
+
+        muMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+        checkGlError("glGetUniformLocation uMVPMatrix");
+        if (muMVPMatrixHandle == -1) {
+            throw new RuntimeException("Could not get attrib location for uMVPMatrix");
+        }
+
+        muSTMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uSTMatrix");
+        checkGlError("glGetUniformLocation uSTMatrix");
+        if (muSTMatrixHandle == -1) {
+            throw new RuntimeException("Could not get attrib location for uSTMatrix");
+        }
+
+
+        int[] textures = new int[1];
+        GLES20.glGenTextures(1, textures, 0);
+
+        mTextureID = textures[0];
+        GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, mTextureID);
+        checkGlError("glBindTexture mTextureID");
+        GLES20.glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+
+            /*
+             * Create the SurfaceTexture that will feed this textureID,
+             * and pass it to the MediaPlayer
+             */
+        mSurface = new SurfaceTexture(mTextureID);
+        mSurface.setOnFrameAvailableListener(this);
+
+        Surface surface = new Surface(mSurface);
+        mMediaPlayer.setSurface(surface);
+        mMediaPlayer.setScreenOnWhilePlaying(true);
+        surface.release();
+
+        try {
+            mMediaPlayer.prepare();
+        } catch (IOException t) {
+            Log.e(TAG, "media player prepare failed");
+        }
+
+        synchronized (this) {
+            updateSurface = false;
+        }
+
+        mMediaPlayer.start();
     }
 
     @Override
@@ -151,80 +222,6 @@ public class VideoRender
         checkGlError("glDrawArrays");
         GLES20.glFinish();
 
-    }
-
-    float[] vMatrix = new float[16];
-
-    @Override
-    public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-        Matrix.orthoM(vMatrix, 0, -10, 10, -10, 10, -2000, 2000);
-    }
-
-    @Override
-    public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        mProgram = createProgram(mVertexShader, mFragmentShader);
-        if (mProgram == 0) {
-            return;
-        }
-        maPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
-        checkGlError("glGetAttribLocation aPosition");
-        if (maPositionHandle == -1) {
-            throw new RuntimeException("Could not get attrib location for aPosition");
-        }
-        maTextureHandle = GLES20.glGetAttribLocation(mProgram, "aTextureCoord");
-        checkGlError("glGetAttribLocation aTextureCoord");
-        if (maTextureHandle == -1) {
-            throw new RuntimeException("Could not get attrib location for aTextureCoord");
-        }
-
-        muMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
-        checkGlError("glGetUniformLocation uMVPMatrix");
-        if (muMVPMatrixHandle == -1) {
-            throw new RuntimeException("Could not get attrib location for uMVPMatrix");
-        }
-
-        muSTMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uSTMatrix");
-        checkGlError("glGetUniformLocation uSTMatrix");
-        if (muSTMatrixHandle == -1) {
-            throw new RuntimeException("Could not get attrib location for uSTMatrix");
-        }
-
-
-        int[] textures = new int[1];
-        GLES20.glGenTextures(1, textures, 0);
-
-        mTextureID = textures[0];
-        GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, mTextureID);
-        checkGlError("glBindTexture mTextureID");
-
-        GLES20.glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER,
-                GLES20.GL_NEAREST);
-        GLES20.glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER,
-                GLES20.GL_LINEAR);
-
-            /*
-             * Create the SurfaceTexture that will feed this textureID,
-             * and pass it to the MediaPlayer
-             */
-        mSurface = new SurfaceTexture(mTextureID);
-        mSurface.setOnFrameAvailableListener(this);
-
-        Surface surface = new Surface(mSurface);
-        mMediaPlayer.setSurface(surface);
-        mMediaPlayer.setScreenOnWhilePlaying(true);
-        surface.release();
-
-        try {
-            mMediaPlayer.prepare();
-        } catch (IOException t) {
-            Log.e(TAG, "media player prepare failed");
-        }
-
-        synchronized (this) {
-            updateSurface = false;
-        }
-
-        mMediaPlayer.start();
     }
 
     synchronized public void onFrameAvailable(SurfaceTexture surface) {
