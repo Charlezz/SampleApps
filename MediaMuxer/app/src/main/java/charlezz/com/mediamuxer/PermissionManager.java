@@ -16,7 +16,7 @@ public class PermissionManager {
 	private static PermissionManager instance;
 
 	public static PermissionManager getInstance(){
-		if(instance!=null){
+		if(instance==null){
 			instance = new PermissionManager();
 		}
 		return instance;
